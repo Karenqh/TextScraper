@@ -1,0 +1,10 @@
+# Temp files
+.DS_Store
+
+# Settings
+.classpath
+.project
+.settings/
+
+# Binary
+bin/*
