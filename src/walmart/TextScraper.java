@@ -48,8 +48,9 @@ public class TextScraper {
 		}					
 	}
 
+	// Method that returns the number result for given keywords
 	public int numberResult(String keywords) {
-		// Pre-process keywords
+		// Process whitespace in keywords
 		keywords = keywords.replace(" ", "%20");
 		String address = "http://www.walmart.com/search/?query="
 				+ keywords;
@@ -63,27 +64,28 @@ public class TextScraper {
 		}
 		
 		// Parse HTML
-		Document doc = Jsoup.parse(html);			
-		// Find the element that contains the result
+		Document doc = Jsoup.parse(html);	
+		
+		// Find the element that contains the result number
 		Element resultContainer = doc.getElementsByClass("result-summary-container").get(0);
 		if (resultContainer == null) {
 			System.out.println("Result container not found!");
 			return 0;
 		}
-		// Get the text content
+		// Extract value from the text containing number result
 		String resultText = resultContainer.text();
 		int start_index = resultText.indexOf("of ") + 3;
 		int end_index = resultText.indexOf(" results");
 		String resultNumber = resultText.substring(start_index, end_index);
-		// Walmart doesn't include "," in number result, but just in case
+		// Walmart doesn't include "," in huge number, but just in case
 		if (resultNumber.contains("c")) {
 			resultNumber = resultNumber.replace(",", "");
 		}			
 		return Integer.parseInt(resultNumber);
 	}
 
+	// Helper function thats returns HTML of the page in request
 	private String getPage(String keywords, int pageNumber) {
-		// http://www.walmart.com/search/?query=digital%20camera&page=2&cat_id=0
 		keywords = keywords.replace(" ", "%20");
 		// If the 1st page is requested
 		if (pageNumber==1) {
@@ -91,7 +93,7 @@ public class TextScraper {
 					+ keywords;
 			return readURL(address);
 		}
-		// If page number greater 1 is given
+		// If input page number is greater than 1
 		String page_str = "&page=" + pageNumber;
 		String address = "http://www.walmart.com/search/?query="
 				+ keywords + page_str + "&cat_id=0";
@@ -99,6 +101,7 @@ public class TextScraper {
 		return readURL(address);		
 	}
 
+	// Method that print the product info given the keywords and page number
 	public void printResults(String keywords, int pageNumber) {
 		// Find the target page for scraping
 		String page = getPage(keywords, pageNumber);
@@ -109,7 +112,8 @@ public class TextScraper {
 		
 		// Parse the HTML
 		Document doc = Jsoup.parse(page);
-		// Fine elements containing titles and prices
+		
+		// Find elements containing titles and prices
 		Elements titles = doc.getElementsByClass("js-product-title");
 		Elements prices = doc.getElementsByClass("item-price-container");
 		
@@ -120,7 +124,6 @@ public class TextScraper {
 			// Get product title
 			Element titleEl = titles.get(i);
 			title = titleEl.text();
-			//TODO: do we need to trim the title?
 			
 			// Get price
 			// Types of price: $xxx.xx | From $xxx.xx | $xxx.xx - $xxx.xx
@@ -139,6 +142,7 @@ public class TextScraper {
 			
 			// Store in the Result object and print the product info		
 			System.out.println(i+1);
+			// Create an new object of the Result class
 			Result product = new Result(title, price);
 			product.printInfo();
 		}
