@@ -65,25 +65,21 @@ public class TextScraper {
 		// Parse HTML
 		Document doc = Jsoup.parse(html);			
 		// Find the element that contains the result
-		Elements resultContainer = doc.getElementsByClass("result-summary-container");
+		Element resultContainer = doc.getElementsByClass("result-summary-container").get(0);
 		if (resultContainer == null) {
 			System.out.println("Result container not found!");
 			return 0;
 		}
-		// TODO: no need to use for
-		for (Element el : resultContainer) {
-			// Get the text content
-			String resultText = el.text();
-			int start_index = resultText.indexOf("of ") + 3;
-			int end_index = resultText.indexOf(" results");
-			String resultNumber = resultText.substring(start_index, end_index);
-			// Walmart doesn't include "," in number result, but just in case
-			if (resultNumber.contains("c")) {
-				resultNumber = resultNumber.replace(",", "");
-			}			
-			return Integer.parseInt(resultNumber);
-		}	
-		return 0;
+		// Get the text content
+		String resultText = resultContainer.text();
+		int start_index = resultText.indexOf("of ") + 3;
+		int end_index = resultText.indexOf(" results");
+		String resultNumber = resultText.substring(start_index, end_index);
+		// Walmart doesn't include "," in number result, but just in case
+		if (resultNumber.contains("c")) {
+			resultNumber = resultNumber.replace(",", "");
+		}			
+		return Integer.parseInt(resultNumber);
 	}
 
 	private String getPage(String keywords, int pageNumber) {
