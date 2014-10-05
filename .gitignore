@@ -6,5 +6,6 @@
 .classpath
 .settings/
 
-# Binary
+# Binary and executable
 bin/*
+*.jar
