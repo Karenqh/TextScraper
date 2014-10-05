@@ -70,6 +70,7 @@ public class TextScraper {
 			System.out.println("Result container not found!");
 			return 0;
 		}
+		// TODO: no need to use for
 		for (Element el : resultContainer) {
 			// Get the text content
 			String resultText = el.text();
@@ -94,12 +95,11 @@ public class TextScraper {
 					+ keywords;
 			return readURL(address);
 		}
-		// If another page is requested
+		// If page number greater 1 is given
 		String page_str = "&page=" + pageNumber;
 		String address = "http://www.walmart.com/search/?query="
 				+ keywords + page_str + "&cat_id=0";
 		
-		// Check if this page exists
 		return readURL(address);		
 	}
 
@@ -116,29 +116,33 @@ public class TextScraper {
 		// Fine elements containing titles and prices
 		Elements titles = doc.getElementsByClass("js-product-title");
 		Elements prices = doc.getElementsByClass("item-price-container");
-		// Assume 16 results on a page
+		
+		// Assume 16 results on each page
 		for (int i=0; i<16; i++) {
-			String title = "";
-			float price = 0; 
+			String title = "", price = "";
 			
 			// Get product title
 			Element titleEl = titles.get(i);
 			title = titleEl.text();
-			//TODO: should we trim the title?
+			//TODO: do we need to trim the title?
 			
 			// Get price
-			Element priceEl = prices.get(i);
-			Element priceContainer = priceEl.child(0);
-			if (priceContainer.attr("class").equals("price-aux")) {
-								String priceString = priceContainer.text();
-				int start_index = priceString.indexOf("$") + 1;
-				price = Float.parseFloat(priceString.substring(start_index));
-			} else {
-				// hyper-link price
-				price = 0;  //dummy 
+			// Types of price: $xxx.xx | From $xxx.xx | $xxx.xx - $xxx.xx
+			Element priceEl = prices.get(i).child(0);
+			if (priceEl.attr("class").equals("price-from")) {
+				price = "From ";
+				priceEl = prices.get(i).child(1);
 			}
-
+			// Get the price text and parse
+			String priceString = priceEl.text();
+			int start_index = priceString.indexOf("$");
+			if ( start_index == -1) {
+				price = "Price is not given";
+			}
+			price = price + priceString.substring(start_index);
 			
+			// Store in the Result object and print the product info		
+			System.out.println(i+1);
 			Result product = new Result(title, price);
 			product.printInfo();
 		}

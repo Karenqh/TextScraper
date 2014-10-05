@@ -1,9 +1,9 @@
 # Temp files
 .DS_Store
+.project
 
 # Settings
 .classpath
-.project
 .settings/
 
 # Binary
