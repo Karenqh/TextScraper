@@ -13,9 +13,11 @@ How To Run
 Run the executable file from command line in the following two ways:
 
 Query 1: input (requires a single argument)
-	java -jar textscraper.jar <keyword>  (e.g. java -jar textscraper.jar "baby strollers")
+	java -jar textscraper.jar <keyword>  
+	(e.g. java -jar textscraper.jar "baby strollers")
 Query 2: (requires two arguments)
-	java -jar textscraper.jar <keyword> <page number> (e.g. java -jar textscraper.jar "baby strollers" 2)
+	java -jar textscraper.jar <keyword> <page number> 
+	(e.g. java -jar textscraper.jar "baby strollers" 2)
  
 FAQ
 -----------------------
